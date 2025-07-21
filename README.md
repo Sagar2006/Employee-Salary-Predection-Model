@@ -2,8 +2,6 @@
 
 This project predicts whether an employee earns >50K or ≤50K using a machine learning model trained on the Adult dataset (`adult 3.csv`).
 
-🚀 Streamlit App Preview: https://share.streamlit.io/Sagar2006/Employee-Salary-Predection-Model/app.py
-
 ## Structure
 - `data/adult_3.csv`: Main dataset
 - `src/train.py`: Script to train the model
