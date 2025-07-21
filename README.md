@@ -1,7 +1,4 @@
-# edunet
-
-
-# Employee Income Classification (using adult 3.csv)
+# Employee Salary Predection
 
 This project predicts whether an employee earns >50K or ≤50K using a machine learning model trained on the Adult dataset (`adult 3.csv`).
 
