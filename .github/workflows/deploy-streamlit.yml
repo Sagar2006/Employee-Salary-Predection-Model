@@ -10,9 +10,13 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -37,6 +41,36 @@ jobs:
         id: get_url
         run: |
           echo "url=https://share.streamlit.io/${{ github.repository }}/app.py" >> $GITHUB_OUTPUT
+
+      - name: Update README with preview link
+        run: |
+          # Create a temporary file with the preview link at the top
+          echo "🚀 Streamlit App Preview: ${{ steps.get_url.outputs.url }}" > temp_readme.md
+          echo "" >> temp_readme.md
+          
+          # Check if preview link already exists and remove it
+          if grep -q "🚀 Streamlit App Preview:" README.md; then
+            # Remove existing preview link and empty line after it
+            sed -i '/🚀 Streamlit App Preview:/d; /^$/d' README.md
+          fi
+          
+          # Add the new preview link at the top
+          cat README.md >> temp_readme.md
+          mv temp_readme.md README.md
+
+      - name: Commit README changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add README.md
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Auto-update README with Streamlit app preview link [skip ci]"
+            git push
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Add preview link to release
         if: startsWith(github.ref, 'refs/tags/')
